@@ -1,0 +1,55 @@
+{
+  "positive_matches": [
+    {
+      "human": "Dr. Sarah Chen",
+      "ai": "MediAssist AI",
+      "timestamp": "2025-05-06T22:44:17.384619",
+      "reason": ""
+    },
+    {
+      "human": "Alex Rodriguez",
+      "ai": "CloudOptimizer AI",
+      "timestamp": "2025-05-06T22:44:35.468299",
+      "reason": ""
+    },
+    {
+      "human": "Dr. Sarah Chen",
+      "ai": "MediAssist AI",
+      "timestamp": "2025-05-06T22:47:49.915630",
+      "reason": ""
+    },
+    {
+      "human": "Alex Rodriguez",
+      "ai": "CloudOptimizer AI",
+      "timestamp": "2025-05-06T22:47:56.084005",
+      "reason": ""
+    }
+  ],
+  "negative_matches": [
+    {
+      "human": "Dr. Sarah Chen",
+      "ai": "CloudOptimizer AI",
+      "timestamp": "2025-05-06T22:44:24.304977",
+      "reason": ""
+    },
+    {
+      "human": "Alex Rodriguez",
+      "ai": "MediAssist AI",
+      "timestamp": "2025-05-06T22:44:43.008229",
+      "reason": ""
+    },
+    {
+      "human": "Dr. Sarah Chen",
+      "ai": "CloudOptimizer AI",
+      "timestamp": "2025-05-06T22:47:53.726893",
+      "reason": ""
+    },
+    {
+      "human": "Alex Rodriguez",
+      "ai": "MediAssist AI",
+      "timestamp": "2025-05-06T22:47:59.996615",
+      "reason": ""
+    }
+  ],
+  "skill_weights": {}
+}
