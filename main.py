@@ -78,7 +78,6 @@ with tab1:
             st.session_state['ai_profiles'] = sample_data['ai_profiles']
             st.session_state['num_humans'] = len(sample_data['human_profiles'])
             st.session_state['num_ais'] = len(sample_data['ai_profiles'])
-            st.success("Sample data loaded successfully!")
             st.experimental_rerun()
 
     # Human experts upload
