@@ -4,6 +4,8 @@ import plotly.express as px
 from extractor import SkillExtractor
 from matcher import ExpertMatcher
 import json
+import plotly.graph_objects as go
+from datetime import datetime
 # Removed unused import of datetime
 
 # Initialize components
@@ -55,6 +57,12 @@ total_weight = skill_similarity_weight + \
 if total_weight != 1.0:
     st.sidebar.warning("Weights should sum to 1.0. Please adjust the weights.")
 
+# Session state for sample data
+if 'human_profiles' not in st.session_state:
+    st.session_state['human_profiles'] = []
+if 'ai_profiles' not in st.session_state:
+    st.session_state['ai_profiles'] = []
+
 # Main content
 tab1, tab2, tab3 = st.tabs(
     ["Upload Profiles", "View Matches", "Feedback & Analytics"])
@@ -66,22 +74,33 @@ with tab1:
     if st.button("Load Sample Data"):
         with open('sample_data.json', 'r') as f:
             sample_data = json.load(f)
-            st.session_state.human_profiles = sample_data['human_profiles']
-            st.session_state.ai_profiles = sample_data['ai_profiles']
+            st.session_state['human_profiles'] = sample_data['human_profiles']
+            st.session_state['ai_profiles'] = sample_data['ai_profiles']
+            st.session_state['num_humans'] = len(sample_data['human_profiles'])
+            st.session_state['num_ais'] = len(sample_data['ai_profiles'])
             st.success("Sample data loaded successfully!")
 
     # Human experts upload
     st.subheader("Human Experts")
-    human_profiles = []
-
+    if 'num_humans' not in st.session_state:
+        st.session_state['num_humans'] = 1
     num_humans = st.number_input(
-        "Number of Human Experts", min_value=1, max_value=10, value=1)
+        "Number of Human Experts", min_value=1, max_value=10, value=st.session_state['num_humans'], key="num_humans")
+    human_profiles = []
 
     for i in range(num_humans):
         with st.expander(f"Human Expert {i+1}"):
-            name = st.text_input(f"Name {i+1}")
-            bio = st.text_area(f"Bio {i+1}")
-            skills = st.text_area(f"Skills (comma-separated) {i+1}")
+            if len(st.session_state['human_profiles']) > i:
+                default_name = st.session_state['human_profiles'][i]['name']
+                default_bio = st.session_state['human_profiles'][i]['bio']
+                default_skills = ", ".join(st.session_state['human_profiles'][i]['skills'])
+            else:
+                default_name = ""
+                default_bio = ""
+                default_skills = ""
+            name = st.text_input(f"Name {i+1}", value=default_name, key=f"human_name_{i}")
+            bio = st.text_area(f"Bio {i+1}", value=default_bio, key=f"human_bio_{i}")
+            skills = st.text_area(f"Skills (comma-separated) {i+1}", value=default_skills, key=f"human_skills_{i}")
 
             if name and bio and skills:
                 skills_list = [s.strip() for s in skills.split(",")]
@@ -90,20 +109,30 @@ with tab1:
                     "bio": bio,
                     "skills": skills_list
                 })
+    st.session_state['human_profiles'] = human_profiles
 
     # AI agents upload
     st.subheader("AI Agents")
-    ai_profiles = []
-
+    if 'num_ais' not in st.session_state:
+        st.session_state['num_ais'] = 1
     num_ais = st.number_input("Number of AI Agents",
-                              min_value=1, max_value=10, value=1)
+                              min_value=1, max_value=10, value=st.session_state['num_ais'], key="num_ais")
+    ai_profiles = []
 
     for i in range(num_ais):
         with st.expander(f"AI Agent {i+1}"):
-            name = st.text_input(f"AI Name {i+1}")
-            description = st.text_area(f"Description {i+1}")
+            if len(st.session_state['ai_profiles']) > i:
+                default_name = st.session_state['ai_profiles'][i]['name']
+                default_description = st.session_state['ai_profiles'][i]['description']
+                default_capabilities = ", ".join(st.session_state['ai_profiles'][i]['capabilities'])
+            else:
+                default_name = ""
+                default_description = ""
+                default_capabilities = ""
+            name = st.text_input(f"AI Name {i+1}", value=default_name, key=f"ai_name_{i}")
+            description = st.text_area(f"Description {i+1}", value=default_description, key=f"ai_description_{i}")
             capabilities = st.text_area(
-                f"Capabilities (comma-separated) {i+1}")
+                f"Capabilities (comma-separated) {i+1}", value=default_capabilities, key=f"ai_capabilities_{i}")
 
             if name and description and capabilities:
                 capabilities_list = [c.strip()
@@ -113,6 +142,7 @@ with tab1:
                     "description": description,
                     "capabilities": capabilities_list
                 })
+    st.session_state['ai_profiles'] = ai_profiles
 
 with tab2:
     st.header("Expert Matches")
@@ -203,6 +233,11 @@ with tab2:
 
 with tab3:
     st.header("Feedback & Analytics")
+
+    # Add a button to clear all feedback
+    if st.button("Clear All Feedback"):
+        expert_matcher.clear_feedback()
+        st.success("All feedback has been cleared!")
 
     # Load feedback data
     feedback_data = expert_matcher.feedback_data

@@ -235,3 +235,11 @@ class ExpertMatcher:
             explanation.append("Negative historical feedback")
 
         return ". ".join(explanation)
+
+    def clear_feedback(self):
+        self.feedback_data = {
+            'positive_matches': [],
+            'negative_matches': [],
+            'skill_weights': {}
+        }
+        self.save_feedback()
